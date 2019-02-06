@@ -1,10 +1,10 @@
-# Dialogflow PHP
+# BarcodeHelper
 
-Unofficial PHP library for V1 of the Dialogflow API.
+Un helper pour générer / vérifier des codebarres.
 
 ## Install
 ```
-composer require 0099ff/dialogflowphp
+composer require thalassa-web/barcode-helper
 ```
 
 
@@ -12,22 +12,15 @@ composer require 0099ff/dialogflowphp
 ```php
 include "vendor/autoload.php";
 
-use DialogflowPHP\Client;
+use ThalassaWeb\BarcodeHelper\Code93;
 
-$client = new Client('developer_access_token', 'session_id');
-$response = $client->query("Hi Chatbot!");
+$code93 = new Code93('*');
+$chaineEncodee = $code93->encoder("/PT/12AZERTY34");
 
-echo $response->result->fulfillment->speech;
+echo $chaineEncodee;
 ```
-> Hello, puny human
+> \*/PT/12AZERTY34__*
 ```php
-echo $response->result->score;
+echo $code93->verifier('*/PT/12AZERTY34__*');
 ```
-> 0.91000002622604
-
-Agent responses can also be returned as a JSON string:
-```php
-$response = $client->query("Hi chatbot!", $return_as_json=true);
-echo $response;
-```
-> { "id": "xxxx", "timestamp": "2018-05-05T09:52:25.905Z", "lang": "en", "result": { "source": "agent", "resolvedQuery": "Hi chatbot!", "action": "", "actionIncomplete": false, "parameters": {}, "contexts": [], "metadata": { "intentId": "xxxx", "webhookUsed": "false", "webhookForSlotFillingUsed": "false", "intentName": "Hey" }, "fulfillment": { "speech": "Hello, puny human", "messages": [ { "type": 0, "speech": "Hello, puny human" } ] }, "score": 0.9100000262260437 }, "status": { "code": 200, "errorType": "success" }, "sessionId": "session_id" }
+> 1
