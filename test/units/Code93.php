@@ -45,23 +45,11 @@ class Code93 extends atoum
     public function testValidation() {
         $this->given($this->newTestedInstance)
             ->then
-                ->boolean($this->testedInstance->verifier("*CODE 93E0*"))
+                ->boolean($this->testedInstance->verifier("CODE 93E0"))
                     ->isTrue
             ->and
-                ->boolean($this->testedInstance->verifier("*CODE 93E1*"))
+                ->boolean($this->testedInstance->verifier("CODE 93E1"))
                     ->isFalse
-        ;
-    }
-
-    /**
-     * Caractère Start/Stop n'est pas celui attendu
-     */
-    public function testStartStopNonValide() {
-        $this->given($this->newTestedInstance)
-            ->then
-                ->exception(function() {
-                    $this->testedInstance->verifier("#CODE 93E0#");
-                })
         ;
     }
 }

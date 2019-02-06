@@ -38,18 +38,25 @@ class Code93
     ];
 
     /**
-     * Caractère Start/Stop
+     * Caractère Start
      * @var string
      */
-    private $startStop;
+    private $start;
+
+    /**
+     * Caractère Stop
+     * @var string
+     */
+    private $stop;
 
     /**
      * Generateur constructor.
      * @param string $startStop
      */
-    public function __construct(string $startStop = '*')
+    public function __construct(string $start = '*', string $stop = '*')
     {
-        $this->startStop = $startStop;
+        $this->start = $start;
+        $this->stop = $stop;
     }
 
     /**
@@ -63,7 +70,7 @@ class Code93
         if (preg_match(self::$patternInvalide, $donnees)) {
             throw new ValidationException("Les données d'entrées ne sont pas encodable en code 93 !");
         }
-        return $this->startStop . $donnees . $this->calculer($donnees) . $this->startStop;
+        return $this->start . $donnees . $this->calculer($donnees) . $this->stop;
     }
 
     /**
@@ -72,13 +79,8 @@ class Code93
      * @return bool
      */
     public function verifier(string $chaine): bool {
-        $lenSs = count($this->startStop);
-        if (substr($chaine, -$lenSs) !== $this->startStop || substr($chaine, 0, $lenSs) !== $this->startStop) {
-            throw new ValidationException("Le charactère Start/Stop attendu est {$this->startStop} !");
-        }
-        $chaineSansStartStop = substr($chaine, $lenSs, count($chaine) - (2 * $lenSs));
-        $checksum = substr($chaineSansStartStop, -2, 2);
-        $donnees = substr($chaineSansStartStop, 0, -2);
+        $checksum = substr($chaine, -2, 2);
+        $donnees = substr($chaine, 0, -2);
         return $this->calculer($donnees) === $checksum;
     }
 

@@ -14,13 +14,13 @@ include "vendor/autoload.php";
 
 use ThalassaWeb\BarcodeHelper\Code93;
 
-$code93 = new Code93('*');
+$code93 = new Code93('Ä', 'Ö');
 $chaineEncodee = $code93->encoder("/PT/12AZERTY34");
 
 echo $chaineEncodee;
 ```
-> \*/PT/12AZERTY34__*
+> Ä/PT/12AZERTY34TMÖ
 ```php
-echo $code93->verifier('*/PT/12AZERTY34__*');
+echo $code93->verifier('/PT/12AZERTY34TM');
 ```
 > 1
