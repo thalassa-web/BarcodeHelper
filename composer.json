@@ -1,0 +1,29 @@
+{
+    "name": "thalassa-web/barcode-helper",
+    "description": "Un helper pour générer / vérifier des codebarres",
+    "keywords": ["barcode", "code93", "validator"],
+    "type": "package",
+    "license": "BSD-3-Clause",
+    "authors": [{
+        "name": "Bruno Desprez",
+        "homepage": "https://github.com/thalassa-web/",
+        "role": "developer"
+    }],
+    "autoload": {
+        "psr-4": {
+            "ThalassaWeb\\BarcodeHelper\\" : "src/"
+        }
+    },
+    "version": "0.1",
+    "minimum-stability": "dev",
+    "require-dev": {
+        "atoum/stubs": "2.5.*",
+        "atoum/atoum": "3.2.*"
+    },
+    "require": {
+        "php": "^7.0"
+    },
+    "scripts": {
+        "test": "atoum -d test/units"
+    }
+}
