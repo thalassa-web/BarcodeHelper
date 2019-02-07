@@ -19,7 +19,7 @@ $chaineEncodee = $code93->encoder("/PT/12AZERTY34");
 
 echo $chaineEncodee;
 ```
-> */PT/12AZERTY34TM*|
+> /*/PT/12AZERTY34TM*|
 ```php
 echo $code93->verifier('/PT/12AZERTY34TM');
 ```
