@@ -14,6 +14,9 @@ namespace ThalassaWeb\BarcodeHelper;
  */
 class Code93
 {
+    const FORMAT_CHAINE = 0;
+    const FORMAT_BINAIRE = 1;
+
     /**
      * Le code 93 permet de codifier :
      *   - les 26 lettres majuscules (A à Z),
@@ -38,39 +41,91 @@ class Code93
     ];
 
     /**
-     * Caractère Start
-     * @var string
+     * Représentations binaire des charactères du code 93
+     * @var array
      */
-    private $start;
+    private static $tableBinaires = [
+        '0' => '100010100', '1' => '101001000', '2' => '101000100', '3' => '101000010', '4' => '100101000', '5' => '100100100', '6' => '100100010',
+        '7' => '101010000', '8' => '100010010', '9' => '100001010', 'A' => '110101000', 'B' => '110100100', 'C' => '110100010', 'D' => '110010100',
+        'E' => '110010010', 'F' => '110001010', 'G' => '101101000', 'H' => '101100100', 'I' => '101100010', 'J' => '100110100', 'K' => '100011010',
+        'L' => '101011000', 'M' => '101001100', 'N' => '101000110', 'O' => '100101100', 'P' => '100010110', 'Q' => '110110100', 'R' => '110110010',
+        'S' => '110101100', 'T' => '110100110', 'U' => '110010110', 'V' => '110011010', 'W' => '101101100', 'X' => '101100110', 'Y' => '100110110',
+        'Z' => '100111010', '-' => '100101110', '.' => '111010100', ' ' => '111010010', '$' => '111001010', '/' => '101101110', '+' => '101110110',
+        '%' => '110101110', '!' => '100100110', '#' => '111011010', '&' => '111010110', '@' => '100110010',
+    ];
 
     /**
-     * Caractère Stop
+     * Représentation binaire du caractère Start/Stop
      * @var string
      */
-    private $stop;
+    private static $startStopBinaire = '101011110';
+
+    /**
+     * Représentation binaire du caractère de terminaison
+     * @var string
+     */
+    private static $terminaisonBinaire = '100000000';
+
+    /**
+     * Caractère Start/Stop
+     * @var string
+     */
+    private $startStop;
+
+    /**
+     * Caractère de terminaison
+     * @var string
+     */
+    private $terminaison;
 
     /**
      * Generateur constructor.
      * @param string $startStop
      */
-    public function __construct(string $start = '*', string $stop = '*')
+    public function __construct(string $startStop = '*', string $terminaison = '|')
     {
-        $this->start = $start;
-        $this->stop = $stop;
+        $this->startStop = $startStop;
+        $this->terminaison = $terminaison;
     }
 
     /**
      * Encoder des données en code 93
+     * Sous forme de chaîne normale ou sous forme de chaîne au format binaire
      * @param string $donnees
+     * @param int $format @see FORMAT_STRING et FORMAT_BINAIRE
      * @return string
      * @throws ValidationException
      */
-    public function encoder(string $donnees): string {
+    public function encoder(string $donnees, int $format = self::FORMAT_CHAINE): string {
         // Il y a autre chose que les caractères autorisés -> erreur
         if (preg_match(self::$patternInvalide, $donnees)) {
             throw new ValidationException("Les données d'entrées ne sont pas encodable en code 93 !");
         }
-        return $this->start . $donnees . $this->calculer($donnees) . $this->stop;
+        // Données agrémentées des données de vérification
+        $donneesChecks = $donnees . $this->calculer($donnees);
+        // Données au bon format
+        $donneesCompletes = '';
+        if ($format === static::FORMAT_BINAIRE) {
+            foreach (str_split($donneesChecks) as $char) {
+                $donneesCompletes .= self::$tableBinaires[$char];
+            }
+        } else {
+            $donneesCompletes = $donneesChecks;
+        }
+        // Données finales
+        return $this->ajouterCaracteresEntourants($donneesCompletes, $format);
+    }
+
+    /**
+     * Entourer la chaîne par les startStop
+     * @param string $chaine
+     * @param int $format
+     * @return string
+     */
+    private function ajouterCaracteresEntourants(string $chaine, int $format = self::FORMAT_CHAINE) {
+        $startStop = $format === self::FORMAT_CHAINE ? $this->startStop : self::$startStopBinaire;
+        $terminaison = $format === self::FORMAT_CHAINE ? $this->terminaison : self::$terminaisonBinaire;
+        return $startStop . $chaine . $startStop . $terminaison;
     }
 
     /**

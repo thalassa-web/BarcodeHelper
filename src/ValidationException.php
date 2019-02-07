@@ -6,7 +6,7 @@
  * Time: 15:56
  */
 
-namespace Code93Generator;
+namespace ThalassaWeb\BarcodeHelper;
 
 
 class ValidationException extends \Exception

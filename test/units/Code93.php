@@ -34,7 +34,7 @@ class Code93 extends atoum
         $this->given($this->newTestedInstance)
             ->then
                 ->string($this->testedInstance->encoder("CODE 93"))
-                    ->isEqualTo("*CODE 93E0*")
+                    ->isEqualTo("*CODE 93E0*|")
         ;
     }
 
