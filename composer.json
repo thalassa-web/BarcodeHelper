@@ -14,7 +14,7 @@
             "ThalassaWeb\\BarcodeHelper\\" : "src/"
         }
     },
-    "version": "3.0.0",
+    "version": "dev-master",
     "minimum-stability": "dev",
     "require-dev": {
         "atoum/stubs": "2.5.*",
