@@ -82,7 +82,7 @@ class Code93
      * Generateur constructor.
      * @param string $startStop
      */
-    public function __construct(string $startStop = '*', string $terminaison = '|')
+    public function __construct($startStop = '*', $terminaison = '|')
     {
         $this->startStop = $startStop;
         $this->terminaison = $terminaison;
@@ -96,7 +96,7 @@ class Code93
      * @return string
      * @throws ValidationException
      */
-    public function encoder(string $donnees, int $format = self::FORMAT_CHAINE): string {
+    public function encoder($donnees, $format = self::FORMAT_CHAINE) {
         // Il y a autre chose que les caractères autorisés -> erreur
         if (preg_match(self::$patternInvalide, $donnees)) {
             throw new ValidationException("Les données d'entrées ne sont pas encodable en code 93 !");
@@ -122,7 +122,7 @@ class Code93
      * @param int $format
      * @return string
      */
-    private function ajouterCaracteresEntourants(string $chaine, int $format = self::FORMAT_CHAINE) {
+    private function ajouterCaracteresEntourants($chaine, $format = self::FORMAT_CHAINE) {
         $startStop = $format === self::FORMAT_CHAINE ? $this->startStop : self::$startStopBinaire;
         $terminaison = $format === self::FORMAT_CHAINE ? $this->terminaison : self::$terminaisonBinaire;
         return $startStop . $chaine . $startStop . $terminaison;
@@ -133,7 +133,7 @@ class Code93
      * @param string $chaine
      * @return bool
      */
-    public function verifier(string $chaine): bool {
+    public function verifier($chaine) {
         $checksum = substr($chaine, -2, 2);
         $donnees = substr($chaine, 0, -2);
         return $this->calculer($donnees) === $checksum;
@@ -145,7 +145,7 @@ class Code93
      * @param int $maxPoids
      * @return string
      */
-    private function calculerCheckDigit(string $chaine , int $maxPoids = 20): string {
+    private function calculerCheckDigit($chaine , $maxPoids = 20) {
         $valeur = 0;
         $data = str_split($chaine);
         $longueur = count($data) % $maxPoids;
@@ -163,7 +163,7 @@ class Code93
      * @param string $chaine
      * @return string
      */
-    private function calculer(string $chaine): string {
+    private function calculer($chaine) {
         // Calcul du 1er check digit
         $checkDigit1 = $this->calculerCheckDigit($chaine);
         // Le 1er digit est ajouté à la chaine initial pour le calcul du 2nd digit
