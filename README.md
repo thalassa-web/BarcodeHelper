@@ -14,11 +14,7 @@ include "vendor/autoload.php";
 
 use ThalassaWeb\BarcodeHelper\Code93;
 
-<<<<<<< HEAD
 $code93 = new Code93();
-=======
-$code93 = new Code93('*', '|');
->>>>>>> 5aab814b2b51542ff5ee1a802d1967aaa2c12241
 $chaineEncodee = $code93->encoder("/PT/12AZERTY34");
 
 echo $chaineEncodee;
