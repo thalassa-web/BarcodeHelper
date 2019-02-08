@@ -8,166 +8,165 @@
 
 namespace ThalassaWeb\BarcodeHelper;
 
+use ThalassaWeb\BarcodeHelper\correspondance\Element;
+use ThalassaWeb\BarcodeHelper\correspondance\Table;
+
 /**
  * Généra
  * @package Code93
  */
 class Code93
 {
-    const FORMAT_CHAINE = 0;
-    const FORMAT_BINAIRE = 1;
-
     /**
      * Le code 93 permet de codifier :
      *   - les 26 lettres majuscules (A à Z),
      *   - les 10 chiffres (0 à 9 ) ainsi que
      *   - les 7 caractères (- , . , Espace,  $ , / , + , % )
-     * @var string
      */
-    private static $patternInvalide = "#[^A-Z0-9 .$/+%-]#";
-
+    const PATTERN_INVALIDE = "#[^A-Z0-9 .$/+%-]#";
     /**
-     * Table des caractères CODE93
-     * @var array
+     * Table de caractères sous forme [[caractère, valeur, représentation binaire],…]
      */
-    private static $tableCharacteres = [
-        '0' => 0, '1' => 1, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6,
-        '7' => 7, '8' => 8, '9' => 9, 'A' => 10, 'B' => 11, 'C' => 12, 'D' => 13,
-        'E' => 14, 'F' => 15, 'G' => 16, 'H' => 17, 'I' => 18, 'J' => 19, 'K' => 20,
-        'L' => 21, 'M' => 22, 'N' => 23, 'O' => 24, 'P' => 25, 'Q' => 26, 'R' => 27,
-        'S' => 28, 'T' => 29, 'U' => 30, 'V' => 31, 'W' => 32, 'X' => 33, 'Y' => 34,
-        'Z' => 35, '-' => 36, '.' => 37, ' ' => 38, '$' => 39, '/' => 40, '+' => 41,
-        '%' => 42, '!' => 43, '#' => 44, '&' => 45, '@' => 46,
+    const TABLE_CARACTERES = [
+        ['0', 0, 0b100010100], ['1', 1, 0b101001000], ['2', 2, 0b101000100], ['3', 3, 0b101000010],
+        ['4', 4, 0b100101000], ['5', 5, 0b100100100], ['6', 6, 0b100100010], ['7', 7, 0b101010000],
+        ['8', 8, 0b100010010], ['9', 9, 0b100001010], ['A', 10, 0b110101000], ['B', 11, 0b110100100],
+        ['C', 12, 0b110100010], ['D', 13, 0b110010100], ['E', 14, 0b110010010], ['F', 15, 0b110001010],
+        ['G', 16, 0b101101000], ['H', 17, 0b101100100], ['I', 18, 0b101100010], ['J', 19, 0b100110100],
+        ['K', 20, 0b100011010], ['L', 21, 0b101011000], ['M', 22, 0b101001100], ['N', 23, 0b101000110],
+        ['O', 24, 0b100101100], ['P', 25, 0b100010110], ['Q', 26, 0b110110100], ['R', 27, 0b110110010],
+        ['S', 28, 0b110101100], ['T', 29, 0b110100110], ['U', 30, 0b110010110], ['V', 31, 0b110011010],
+        ['W', 32, 0b101101100], ['X', 33, 0b101100110], ['Y', 34, 0b100110110], ['Z', 35, 0b100111010],
+        ['-', 36, 0b100101110], ['.', 37, 0b111010100], [' ', 38, 0b111010010], ['$', 39, 0b111001010],
+        ['/', 40, 0b101101110], ['+', 41, 0b101110110], ['%', 42, 0b110101110], ['!', 43, 0b100100110],
+        ['#', 44, 0b111011010], ['&', 45, 0b111010110], ['@', 46, 0b100110010]
     ];
 
     /**
-     * Représentations binaire des charactères du code 93
-     * @var array
+     * Représentations binaires de caractères d'encadrement
      */
-    private static $tableBinaires = [
-        '0' => '100010100', '1' => '101001000', '2' => '101000100', '3' => '101000010', '4' => '100101000', '5' => '100100100', '6' => '100100010',
-        '7' => '101010000', '8' => '100010010', '9' => '100001010', 'A' => '110101000', 'B' => '110100100', 'C' => '110100010', 'D' => '110010100',
-        'E' => '110010010', 'F' => '110001010', 'G' => '101101000', 'H' => '101100100', 'I' => '101100010', 'J' => '100110100', 'K' => '100011010',
-        'L' => '101011000', 'M' => '101001100', 'N' => '101000110', 'O' => '100101100', 'P' => '100010110', 'Q' => '110110100', 'R' => '110110010',
-        'S' => '110101100', 'T' => '110100110', 'U' => '110010110', 'V' => '110011010', 'W' => '101101100', 'X' => '101100110', 'Y' => '100110110',
-        'Z' => '100111010', '-' => '100101110', '.' => '111010100', ' ' => '111010010', '$' => '111001010', '/' => '101101110', '+' => '101110110',
-        '%' => '110101110', '!' => '100100110', '#' => '111011010', '&' => '111010110', '@' => '100110010',
-    ];
+    const START_STOP_BINAIRE = 0b101011110;
+    const TERMINAISON_BINAIRE = 0b100000000;
 
     /**
-     * Représentation binaire du caractère Start/Stop
-     * @var string
+     * @var Table
      */
-    private static $startStopBinaire = '101011110';
-
-    /**
-     * Représentation binaire du caractère de terminaison
-     * @var string
-     */
-    private static $terminaisonBinaire = '100000000';
-
-    /**
-     * Caractère Start/Stop
-     * @var string
-     */
-    private $startStop;
-
-    /**
-     * Caractère de terminaison
-     * @var string
-     */
-    private $terminaison;
+    private static $tableCorrespondance;
 
     /**
      * Generateur constructor.
-     * @param string $startStop
      */
-    public function __construct(string $startStop = '*', string $terminaison = '|')
+    public function __construct()
     {
-        $this->startStop = $startStop;
-        $this->terminaison = $terminaison;
+        if (self::$tableCorrespondance === null) {
+            self::$tableCorrespondance = Table::getInstanceFromTableSimple(self::TABLE_CARACTERES);
+        }
     }
 
     /**
-     * Encoder des données en code 93
-     * Sous forme de chaîne normale ou sous forme de chaîne au format binaire
+     * Encoder des données en code 93 sous forme de chaîne
      * @param string $donnees
-     * @param int $format @see FORMAT_STRING et FORMAT_BINAIRE
+     * @param string $startStop
+     * @param string $terminaison
      * @return string
      * @throws ValidationException
+     * @throws correspondance\ElementNotFoundException
      */
-    public function encoder(string $donnees, int $format = self::FORMAT_CHAINE): string {
+    public function encoder(string $donnees, string $startStop = '*', string $terminaison = '|'): string {
         // Il y a autre chose que les caractères autorisés -> erreur
-        if (preg_match(self::$patternInvalide, $donnees)) {
-            throw new ValidationException("Les données d'entrées ne sont pas encodable en code 93 !");
-        }
+        $this->verifierDonnees($donnees);
+        $strDigits = implode('', $this->getCheckDigits(static::donneesToElements($donnees)));
         // Données agrémentées des données de vérification
-        $donneesChecks = $donnees . $this->calculer($donnees);
-        // Données au bon format
-        $donneesCompletes = '';
-        if ($format === static::FORMAT_BINAIRE) {
-            foreach (str_split($donneesChecks) as $char) {
-                $donneesCompletes .= self::$tableBinaires[$char];
-            }
-        } else {
-            $donneesCompletes = $donneesChecks;
-        }
-        // Données finales
-        return $this->ajouterCaracteresEntourants($donneesCompletes, $format);
+        return $startStop . $donnees . $strDigits . $startStop . $terminaison;
     }
 
     /**
-     * Entourer la chaîne par les startStop
-     * @param string $chaine
-     * @param int $format
-     * @return string
+     * Encodage en représentation binaire
+     * Le retour est un tableau d'entier chaque entier peyt être comvertit er sa représentation binaire par la fonction decbin
+     * @see http://php.net/manual/fr/function.decbin.php
+     * @param string $donnees
+     * @return int[]
+     * @throws ValidationException
+     * @throws correspondance\ElementNotFoundException
      */
-    private function ajouterCaracteresEntourants(string $chaine, int $format = self::FORMAT_CHAINE) {
-        $startStop = $format === self::FORMAT_CHAINE ? $this->startStop : self::$startStopBinaire;
-        $terminaison = $format === self::FORMAT_CHAINE ? $this->terminaison : self::$terminaisonBinaire;
-        return $startStop . $chaine . $startStop . $terminaison;
+    public function encoderBinaire(string $donnees): array {
+        // Il y a autre chose que les caractères autorisés -> erreur
+        $this->verifierDonnees($donnees);
+        // Transformer en liste d'éléments
+        $dataEntree = static::donneesToElements($donnees);
+        // Ajout des éléments de controle
+        $data = array_merge($dataEntree, $this->getCheckDigits($dataEntree));
+        // Récupération sous forme binaire
+        $dataBinaires = array_map(function (Element $element) {return $element->getRepresentationBinaire();}, $data);
+        // Encadrement
+        return array_merge([static::START_STOP_BINAIRE], $dataBinaires, [static::START_STOP_BINAIRE, static::TERMINAISON_BINAIRE]);
     }
 
     /**
      * Vérification des checks digit
      * @param string $chaine
      * @return bool
+     * @throws correspondance\ElementNotFoundException
      */
     public function verifier(string $chaine): bool {
-        $checksum = substr($chaine, -2, 2);
-        $donnees = substr($chaine, 0, -2);
-        return $this->calculer($donnees) === $checksum;
+        $nbCheckDigit = 2;
+        $checksum = substr($chaine, -$nbCheckDigit);
+        $elements = static::donneesToElements(substr($chaine, 0, -$nbCheckDigit));
+        return implode('', $this->getCheckDigits($elements)) === $checksum;
     }
 
     /**
-     * Calcul d'un check digit
-     * @param string $chaine
-     * @param int $maxPoids
-     * @return string
+     * Vérification des données d'entrée
+     * @param string $donnees
+     * @throws ValidationException
      */
-    private function calculerCheckDigit(string $chaine , int $maxPoids = 20): string {
-        $valeur = 0;
-        $data = str_split($chaine);
-        $longueur = count($data) % $maxPoids;
-        // Calcul de la somme des poids x valeur du caractère
-        foreach ($data as $char) {
-            $longueur = $longueur == 0 ? $maxPoids : $longueur;
-            $valeur += self::$tableCharacteres[$char] * $longueur;
-            --$longueur;
+    private function verifierDonnees(string $donnees) {
+        if (preg_match(self::PATTERN_INVALIDE, $donnees)) {
+            throw new ValidationException("Les données d'entrées ne sont pas encodable en code 93 !");
         }
-        return array_search(($valeur % 47), self::$tableCharacteres);
     }
 
     /**
      * Calcul des 2 checks digit
-     * @param string $chaine
-     * @return string
+     * @param Element[] $data
+     * @return Element[]
+     * @throws correspondance\ElementNotFoundException
      */
-    private function calculer(string $chaine): string {
+    private function getCheckDigits(array $data): array {
         // Calcul du 1er check digit
-        $checkDigit1 = $this->calculerCheckDigit($chaine);
+        $checkDigits[] = static::calculerCheckDigit($data);
         // Le 1er digit est ajouté à la chaine initial pour le calcul du 2nd digit
+        $checkDigits[] = static::calculerCheckDigit(array_merge($data, $checkDigits),15);
         // On retourne ensuite les deux checks digits l'un derrière l'autre
-        return $checkDigit1 . $this->calculerCheckDigit($chaine . $checkDigit1, 15);
+        return $checkDigits;
+    }
+
+    /**
+     * Transformer une chaine en liste d'éléments
+     * @param string $donnees
+     * @return Element[]
+     */
+    private static function donneesToElements(string $donnees): array {
+        return array_map(function (string $char) {
+            return self::$tableCorrespondance->getElementParCaractere($char);
+        } ,str_split($donnees));
+    }
+
+    /**
+     * Calcul d'un check digit
+     * @param Element[] $data
+     * @param int $maxPoids
+     * @return Element
+     * @throws correspondance\ElementNotFoundException
+     */
+    private static function calculerCheckDigit(array $data , int $maxPoids = 20): Element {
+        $valeur = 0;
+        $longueur = count($data) % $maxPoids;
+        // Calcul de la somme des poids x valeur du caractère
+        foreach ($data as $element) {
+            $longueur = $longueur == 0 ? $maxPoids : $longueur;
+            $valeur += ($element->getValeur() * $longueur--);
+        }
+        return self::$tableCorrespondance->getElementParValeur($valeur % 47);
     }
 }

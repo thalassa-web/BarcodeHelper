@@ -39,6 +39,24 @@ class Code93 extends atoum
     }
 
     /**
+     * Test d'encodage binaire
+     * @see http://www.gomaro.ch/code93.htm
+     */
+    public function testEncodageBinaire() {
+        $this->given($this->newTestedInstance)
+            ->then
+            ->array($this->testedInstance->encoderBinaire("CODE 93"))
+                ->hasSize(12)
+                ->isEqualTo([
+                    //   *           C             O            D           E            [ ]          9
+                    0b101011110, 0b110100010, 0b100101100, 0b110010100, 0b110010010, 0b111010010, 0b100001010,
+                    //   3           E             0            *           |
+                    0b101000010, 0b110010010, 0b100010100, 0b101011110, 0b100000000
+                ])
+        ;
+    }
+
+    /**
      * Test de validation des clefs
      * @see http://www.gomaro.ch/code93.htm
      */
