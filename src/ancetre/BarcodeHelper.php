@@ -129,14 +129,13 @@ abstract class BarcodeHelper
     }
 
     /**
-     * Encodage en représentation binaire
-     * Le retour est un tableau d'entier chaque entier peyt être comvertit er sa représentation binaire par la fonction decbin
+     * Encodage en représentation binaire (sous forme de «0» et de «1»)
      * @see http://php.net/manual/fr/function.decbin.php
      * @param string $donnees
-     * @return int[]
+     * @return string
      * @throws ValidationException
      */
-    final public function encoderBinaire(string $donnees): array {
+    final public function encoderBinaire(string $donnees): string {
         // Il y a autre chose que les caractères autorisés -> erreur
         $this->validerDonnees($donnees);
         // Transformer en liste d'éléments
@@ -148,7 +147,7 @@ abstract class BarcodeHelper
         array_push($data, $this->getStopElement(), $this->getElementTerminal());
         $dataFiltrees = array_filter($data, function (Element $element) {return $element->getRepresentationBinaire() > 0;});
         // Récupération sous forme binaire
-        return array_map(function (Element $element) {return $element->getRepresentationBinaire();}, $dataFiltrees);
+        return implode('', array_map(function (Element $element) {return decbin($element->getRepresentationBinaire());}, $dataFiltrees));
     }
 
     /**
