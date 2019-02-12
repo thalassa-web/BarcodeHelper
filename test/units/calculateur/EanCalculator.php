@@ -18,13 +18,57 @@ use atoum;
 class EanCalculator extends atoum
 {
     /**
-     * Un caractère de la chaine à encoder n'est pas valide
+     * Calcul clé de controle EAN 13
      */
-    public function testCleControleEAN13() {
+    public function testCleControleEan13() {
         $this->given($this->newTestedInstance)
             ->then
                 ->string($this->testedInstance->getCleControle("761234567890"))
                     ->isEqualTo("0")
+        ;
+    }
+
+    /**
+     * Calcul clé de contrôle EAN 8
+     */
+    public function testCleControleEan8() {
+        $this->given($this->newTestedInstance(8))
+            ->then
+                ->string($this->testedInstance->getCleControle("7612345"))
+                    ->isEqualTo("0")
+        ;
+    }
+
+    /**
+     * Calcul clé de contrôle UPC A
+     */
+    public function testCleControleUpcA() {
+        $this->given($this->newTestedInstance(12))
+            ->then
+                ->string($this->testedInstance->getCleControle("04210000526"))
+                    ->isEqualTo("4")
+        ;
+    }
+
+    /**
+     * Calcul clé de contrôle UPC E
+     */
+    public function testCleControleUpcE() {
+        $this->given($this->newTestedInstance(6))
+            ->then
+                ->string($this->testedInstance->getCleControle("42526"))
+                    ->isEqualTo("1")
+        ;
+    }
+
+    /**
+     * Calcul clé de contrôle EAN 14
+     */
+    public function testCleControleEan14() {
+        $this->given($this->newTestedInstance(14))
+            ->then
+            ->string($this->testedInstance->getCleControle("2419730963892"))
+            ->isEqualTo("5")
         ;
     }
 }

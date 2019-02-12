@@ -44,6 +44,8 @@ class EanCalculator implements ICalculateur
      */
     public function getCleControle(string $donnees): string
     {
+        // On lit de droite à gauche car l'alternance de poids commence à droite
+        $donneesInversees = strrev($donnees);
         /*
          * Comme on ne se base que sur du modulo 10, seuls les unités importent
          * Le modulo 10 de la somme d'entiers revient à faire la somme des unités de ces derniers
@@ -58,8 +60,8 @@ class EanCalculator implements ICalculateur
          */
         $somme = 0;
         for ($index = 0; $index < $this->taille - 1; $index++) {
-            $valeur = intval($donnees[$index]);
-            $valeurCalc = ($index % 2) ? static::$valeursPaires[$valeur] : $valeur;
+            $valeur = intval($donneesInversees[$index]);
+            $valeurCalc = ($index % 2) ? $valeur : static::$valeursPaires[$valeur];
             $somme = $somme + $valeurCalc;
             $somme = $somme < 10 ? $somme : ($somme - 10);
         }
