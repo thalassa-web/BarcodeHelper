@@ -6,7 +6,7 @@
  * Time: 15:56
  */
 
-namespace ThalassaWeb\BarcodeHelper;
+namespace ThalassaWeb\BarcodeHelper\ancetre;
 
 
 class ValidationException extends \Exception

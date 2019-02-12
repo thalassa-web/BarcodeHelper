@@ -2,14 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: bruno
- * Date: 08/02/2019
- * Time: 12:23
+ * Date: 06/02/2019
+ * Time: 15:56
  */
 
-namespace ThalassaWeb\BarcodeHelper\correspondance;
+namespace ThalassaWeb\BarcodeHelper\ancetre;
 
 
-class ElementNotFoundException extends \Exception
+class BascodeInconnuException extends \Exception
 {
     public function __construct(string $message)
     {
