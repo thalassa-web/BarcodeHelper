@@ -9,7 +9,7 @@
 namespace ThalassaWeb\BarcodeHelper\ancetre;
 
 
-class BascodeInconnuException extends \Exception
+class BarcodeInconnuException extends \Exception
 {
     public function __construct(string $message)
     {

@@ -15,28 +15,46 @@ namespace ThalassaWeb\BarcodeHelper\ancetre;
  *     - Encoder en un format de sortie
  * @package ThalassaWeb\BarcodeHelper\ancetre
  */
-abstract class Barcode
+class Barcode
 {
     /**
-     * Calcul du checksum
-     * @param string $donnees
-     * @return string
+     * @var IValidateur
      */
-    abstract protected function calculerChecksum(string $donnees): string;
+    private $validateur;
 
     /**
-     * Calcul de l'encodage
-     * @param string $donnees
-     * @return string
+     * @var ICalculateur
      */
-    abstract protected function calculerEncodage(string $donnees): string;
+    private $calculateur;
 
     /**
-     * Définir comment valider les données
+     * @var IEncodeur
+     */
+    private $encodeur;
+
+    /**
+     * Barcode constructor.
+     * @param IValidateur $validateur
+     * @param ICalculateur $calculateur
+     */
+    public function __construct(IEncodeur $encodeur, IValidateur $validateur = null, ICalculateur $calculateur = null)
+    {
+        $this->validateur = $validateur;
+        $this->calculateur = $calculateur;
+        $this->encodeur = $encodeur;
+    }
+
+    /**
+     * Validation des données
      * @param string $donnees
      * @return bool
      */
-    abstract public function valider(string $donnees): bool;
+    final public function valider(string $donnees): bool {
+        if ($this->validateur === null) {
+            return true;
+        }
+        return $this->validateur->valider($donnees);
+    }
 
     /**
      * Vérification des données d'entrée
@@ -55,9 +73,12 @@ abstract class Barcode
      * @return string
      * @throws ValidationException
      */
-    public function getChecksum(string $donnees): string {
+    final public function getChecksum(string $donnees): string {
         $this->validerDonnees($donnees);
-        return $this->calculerChecksum($donnees);
+        if ($this->calculateur === null) {
+            return '';
+        }
+        return $this->calculateur->getCleControle($donnees);
     }
 
     /**
@@ -68,6 +89,6 @@ abstract class Barcode
      */
     public function encoder(string $donnees): string {
         $this->validerDonnees($donnees);
-        return $this->calculerEncodage($donnees);
+        return $this->encodeur->encoder($donnees . $this->getChecksum($donnees));
     }
 }

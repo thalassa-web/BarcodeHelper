@@ -3,13 +3,19 @@
  * Created by PhpStorm.
  * User: bruno
  * Date: 12/02/2019
- * Time: 09:33
+ * Time: 12:19
  */
 
-namespace ThalassaWeb\BarcodeHelper\symbologie;
+namespace ThalassaWeb\BarcodeHelper\encodeur;
 
+use ThalassaWeb\BarcodeHelper\ancetre\IEncodeur;
 
-class Code93Binaire extends Code93
+/**
+ * Class Code93BinEncodeur
+ * Encodeur Code 93 binaire
+ * @package ThalassaWeb\BarcodeHelper\encodeur
+ */
+class Code93BinEncodeur implements IEncodeur
 {
     /**
      * Table de correspondance chaine => représentation binaire
@@ -31,30 +37,12 @@ class Code93Binaire extends Code93
     ];
 
     /**
-     * Chaîne début/fin
+     * Encodage des données
+     * @param string $donnees
      * @return string
      */
-    protected function getStartStop(): string
+    public function encoder(string $donnees): string
     {
-        return '101011110';
-    }
-
-    /**
-     * Chaîne de terminaison
-     * @return string
-     */
-    protected function getTerminaison(): string
-    {
-        return '100000000';
-    }
-
-    /**
-     * La valeur encodée à partir de la valeur d'origine
-     * @param string $valeur
-     * @return string
-     */
-    protected function getValeurEncodee(string $valeur): string
-    {
-        return static::CORRESPONDANCE_BINAIRE[$valeur];
+        return '101011110' . implode('', array_map(function (string $char) {return static::CORRESPONDANCE_BINAIRE[$char];}, str_split($donnees))) . '101011110100000000';
     }
 }
