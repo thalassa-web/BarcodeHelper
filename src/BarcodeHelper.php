@@ -13,13 +13,16 @@ use ThalassaWeb\BarcodeHelper\ancetre\BarcodeInconnuException;
 use ThalassaWeb\BarcodeHelper\ancetre\ICalculateur;
 use ThalassaWeb\BarcodeHelper\ancetre\IEncodeur;
 use ThalassaWeb\BarcodeHelper\ancetre\IValidateur;
+use ThalassaWeb\BarcodeHelper\calculateur\Code128Calculator;
 use ThalassaWeb\BarcodeHelper\calculateur\Code93Calculator;
 use ThalassaWeb\BarcodeHelper\calculateur\DefaultCalculator;
 use ThalassaWeb\BarcodeHelper\calculateur\EanCalculator;
+use ThalassaWeb\BarcodeHelper\encodeur\Code128BinEncodeur;
 use ThalassaWeb\BarcodeHelper\encodeur\Code93BinEncodeur;
 use ThalassaWeb\BarcodeHelper\encodeur\Code93FontEncodeur;
 use ThalassaWeb\BarcodeHelper\encodeur\Ean13BinEncodeur;
 use ThalassaWeb\BarcodeHelper\encodeur\Ean13FontEncodeur;
+use ThalassaWeb\BarcodeHelper\validateur\Code128Validator;
 use ThalassaWeb\BarcodeHelper\validateur\Code93Validator;
 use ThalassaWeb\BarcodeHelper\validateur\DefaultValidator;
 use ThalassaWeb\BarcodeHelper\validateur\Ean13Validator;
@@ -49,6 +52,8 @@ class BarcodeHelper
             case EnumBarcode::CODE_93_FONT:
             case EnumBarcode::CODE_93_BIN:
                 return new Code93Validator();
+            case EnumBarcode::CODE_128_BIN:
+                return new Code128Validator();
             default:
                 return new DefaultValidator();
         }
@@ -67,6 +72,8 @@ class BarcodeHelper
             case EnumBarcode::CODE_93_FONT:
             case EnumBarcode::CODE_93_BIN:
                 return new Code93Calculator();
+            case EnumBarcode::CODE_128_BIN:
+                return new Code128Calculator();
             default:
                 return new DefaultCalculator();
         }
@@ -88,6 +95,8 @@ class BarcodeHelper
                 return new Ean13BinEncodeur();
             case EnumBarcode::EAN_13_FONT:
                 return new Ean13FontEncodeur();
+            case EnumBarcode::CODE_128_BIN:
+                return new Code128BinEncodeur();
         }
         throw new BarcodeInconnuException("Le mode #$mode est inconnu !");
     }
