@@ -14,7 +14,7 @@ class Code128Enchainement
     const VALEURS_START = ['A' => 103, 'B' => 104, 'C' => 105];
     const VALEURS_TRANSFERT = ['A' => 101, 'B' => 100, 'C' => 99];
 
-    private $lastType;
+    private $lastType = '';
     private $enchainement = [];
 
     public function ajouterValeur(int $valeur, string $type): Code128Enchainement
