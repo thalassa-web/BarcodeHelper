@@ -32,6 +32,7 @@ class Code128Enchainement
         } else {
             $this->enchainement[count($this->enchainement) - 1]['valeurs'][] = $valeur;
         }
+        return $this;
     }
 
     public function getLastType(): string
