@@ -14,6 +14,9 @@ composer require thalassa-web/barcode-helper
 * **EAN 13**
   * Format police de caractère (_EnumBarcode::EAN_13_FONT_)
   * Format binaire (_EnumBarcode::EAN_13_BIN_)
+* **Code 128**
+  * Format police de caractère (_EnumBarcode::CODE_128_FONT_)
+  * Format binaire (_EnumBarcode::CODE_128_BIN_)
 
 
 ## Usage
