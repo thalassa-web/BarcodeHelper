@@ -1,0 +1,29 @@
+@font-face {
+    font-family: "Barcode";
+    src: url("./fonts/GenericBarcode.ttf") format("truetype"),
+        url("./fonts/GenericBarcode.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Code93";
+    src: url("./fonts/TIW_Code93.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Ean13";
+    src: url("./fonts/TIW_EAN13.ttf") format("truetype"),
+        url("./fonts/TIW_EAN13.woff") format("woff");
+}
+
+.barcode {
+    font-family: Barcode;
+    font-size: 72pt;
+    line-height: 73pt;
+}
+
+.barcode.code93 {
+    font-family: Code93;
+}
+.barcode.ean13 {
+    font-family: Ean13;
+}
