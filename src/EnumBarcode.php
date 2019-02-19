@@ -19,4 +19,5 @@ class EnumBarcode
     const EAN_13_BIN = 2;
     const EAN_13_FONT = 3;
     const CODE_128_BIN = 4;
+    const CODE_128_FONT = 5;
 }

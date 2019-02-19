@@ -107,13 +107,37 @@ class Barcode extends atoum
         $calculateur = new \mock\ThalassaWeb\BarcodeHelper\ancetre\ICalculateur;
         $this->calling($calculateur)->getCleControle = 'AB';
         $encodeur = new \mock\ThalassaWeb\BarcodeHelper\ancetre\IEncodeur;
-        $this->calling($encodeur)->encoder = function ($chaine) {
-            return "*$chaine*";
+        $this->calling($encodeur)->encoder = function ($chaine, $cle) {
+            return "*$chaine{$cle}*";
         };
         $this->given($this->newTestedInstance($encodeur, $validateur, $calculateur))
             ->then
                 ->string($this->testedInstance->encoder("/PT/12AZERTY34"))
                     ->isEqualTo('*/PT/12AZERTY34AB*')
+        ;
+    }
+
+    /**
+     * Récupération clé de contrôle si données valides
+     */
+    public function testTransformateur() {
+        $validateur = new \mock\ThalassaWeb\BarcodeHelper\ancetre\IValidateur;
+        $this->calling($validateur)->valider = true;
+        $transformateur = new \mock\ThalassaWeb\BarcodeHelper\ancetre\ITransformateur;
+        $this->calling($transformateur)->transformer = function ($chaine) {
+            return str_split($chaine);
+        };
+        $calculateur = new \mock\ThalassaWeb\BarcodeHelper\ancetre\ICalculateur;
+        $this->calling($calculateur)->getCleControle = 'AB';
+        $encodeur = new \mock\ThalassaWeb\BarcodeHelper\ancetre\IEncodeur;
+        $this->calling($encodeur)->encoder = function ($array, $cle) {
+            $chaine = implode($array);
+            return "*$chaine{$cle}*";
+        };
+        $this->given($this->newTestedInstance($encodeur, $validateur, $calculateur, $transformateur))
+            ->then
+            ->string($this->testedInstance->encoder("/PT/12AZERTY34"))
+            ->isEqualTo('*/PT/12AZERTY34AB*')
         ;
     }
 

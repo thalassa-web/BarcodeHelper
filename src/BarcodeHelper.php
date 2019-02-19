@@ -8,96 +8,99 @@
 
 namespace ThalassaWeb\BarcodeHelper;
 
-use ThalassaWeb\BarcodeHelper\ancetre\Barcode;
-use ThalassaWeb\BarcodeHelper\ancetre\BarcodeInconnuException;
-use ThalassaWeb\BarcodeHelper\ancetre\ICalculateur;
-use ThalassaWeb\BarcodeHelper\ancetre\IEncodeur;
-use ThalassaWeb\BarcodeHelper\ancetre\IValidateur;
-use ThalassaWeb\BarcodeHelper\calculateur\Code128Calculator;
-use ThalassaWeb\BarcodeHelper\calculateur\Code93Calculator;
-use ThalassaWeb\BarcodeHelper\calculateur\DefaultCalculator;
-use ThalassaWeb\BarcodeHelper\calculateur\EanCalculator;
-use ThalassaWeb\BarcodeHelper\encodeur\Code128BinEncodeur;
-use ThalassaWeb\BarcodeHelper\encodeur\Code93BinEncodeur;
-use ThalassaWeb\BarcodeHelper\encodeur\Code93FontEncodeur;
-use ThalassaWeb\BarcodeHelper\encodeur\Ean13BinEncodeur;
-use ThalassaWeb\BarcodeHelper\encodeur\Ean13FontEncodeur;
-use ThalassaWeb\BarcodeHelper\validateur\Code128Validator;
-use ThalassaWeb\BarcodeHelper\validateur\Code93Validator;
-use ThalassaWeb\BarcodeHelper\validateur\DefaultValidator;
-use ThalassaWeb\BarcodeHelper\validateur\Ean13Validator;
+use ThalassaWeb\BarcodeHelper\ancetre as Ancetre;
+use ThalassaWeb\BarcodeHelper\code128 as Code128;
+use ThalassaWeb\BarcodeHelper\code93 as Code93;
+use ThalassaWeb\BarcodeHelper\dft as Dft;
+use ThalassaWeb\BarcodeHelper\ean as Ean;
+use ThalassaWeb\BarcodeHelper\ean\_13 as Ean13;
 
 class BarcodeHelper
 {
     /**
      * Obtenir le bon helper
      * @param int $mode
-     * @return Barcode
-     * @throws BarcodeInconnuException
+     * @return Ancetre\Barcode
+     * @throws Ancetre\BarcodeInconnuException
      */
-    public static function getBarcode(int $mode): Barcode {
-        return new Barcode(static::getEncodeur($mode), static::getValidator($mode), static::getCalculator($mode));
+    public static function getBarcode(int $mode): Ancetre\Barcode {
+        return new Ancetre\Barcode(static::getEncodeur($mode), static::getValidator($mode), static::getCalculator($mode), static::getTransformateur($mode));
     }
 
     /**
      * Obtenir le validateur
      * @param int $mode
-     * @return IValidateur
+     * @return Ancetre\IValidateur
      */
-    private static function getValidator(int $mode): IValidateur {
+    private static function getValidator(int $mode): Ancetre\IValidateur {
         switch ($mode) {
             case EnumBarcode::EAN_13_FONT:
             case EnumBarcode::EAN_13_BIN:
-                return new Ean13Validator();
+                return new Ean13\Validator();
             case EnumBarcode::CODE_93_FONT:
             case EnumBarcode::CODE_93_BIN:
-                return new Code93Validator();
+                return new Code93\Validator();
             case EnumBarcode::CODE_128_BIN:
-                return new Code128Validator();
+            case EnumBarcode::CODE_128_FONT:
+                return new Code128\Validator();
             default:
-                return new DefaultValidator();
+                return new Dft\Validator();
         }
     }
 
     /**
      * Obtenir le calculateur
      * @param int $mode
-     * @return ICalculateur
+     * @return Ancetre\ICalculateur
      */
-    private static function getCalculator(int $mode): ICalculateur {
+    private static function getCalculator(int $mode): Ancetre\ICalculateur {
         switch ($mode) {
             case EnumBarcode::EAN_13_FONT:
             case EnumBarcode::EAN_13_BIN:
-                return new EanCalculator(13);
+                return new Ean\Calculator(13);
             case EnumBarcode::CODE_93_FONT:
             case EnumBarcode::CODE_93_BIN:
-                return new Code93Calculator();
+                return new Code93\Calculator();
             case EnumBarcode::CODE_128_BIN:
-                return new Code128Calculator();
+            case EnumBarcode::CODE_128_FONT:
+                return new Code128\Calculator();
             default:
-                return new DefaultCalculator();
+                return new Dft\Calculator();
         }
     }
 
     /**
      * Obtenir l'encodeur
      * @param int $mode
-     * @return IEncodeur
-     * @throws BarcodeInconnuException
+     * @return Ancetre\IEncodeur
+     * @throws Ancetre\BarcodeInconnuException
      */
-    private static function getEncodeur(int $mode): IEncodeur {
+    private static function getEncodeur(int $mode): Ancetre\IEncodeur {
         switch ($mode) {
             case EnumBarcode::CODE_93_BIN:
-                return new Code93BinEncodeur();
+                return new Code93\BinEncodeur();
             case EnumBarcode::CODE_93_FONT:
-                return new Code93FontEncodeur();
+                return new Code93\FontEncodeur();
             case EnumBarcode::EAN_13_BIN:
-                return new Ean13BinEncodeur();
+                return new Ean13\BinEncodeur();
             case EnumBarcode::EAN_13_FONT:
-                return new Ean13FontEncodeur();
+                return new Ean13\FontEncodeur();
             case EnumBarcode::CODE_128_BIN:
-                return new Code128BinEncodeur();
+                return new Code128\BinEncodeur();
+            case EnumBarcode::CODE_128_FONT:
+                return new Code128\FontEncodeur();
         }
-        throw new BarcodeInconnuException("Le mode #$mode est inconnu !");
+        throw new Ancetre\BarcodeInconnuException("Le mode #$mode est inconnu !");
+    }
+
+    /**
+     * @param int $mode
+     * @return Ancetre\ITransformateur
+     */
+    private static function getTransformateur(int $mode): Ancetre\ITransformateur {
+        if ($mode === EnumBarcode::CODE_128_BIN || $mode === EnumBarcode::CODE_128_FONT) {
+            return new Code128\Transformateur();
+        }
+        return new Dft\Transformator();
     }
 }

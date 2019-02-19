@@ -20,5 +20,5 @@ interface ICalculateur
      * @param string $donnees
      * @return string
      */
-    public function getCleControle(string $donnees): string;
+    public function getCleControle($donnees): string;
 }

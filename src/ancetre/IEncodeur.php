@@ -18,7 +18,8 @@ interface IEncodeur
     /**
      * Encodage des données
      * @param string $donnees
+     * @param string $checkDigit
      * @return string
      */
-    public function encoder(string $donnees): string;
+    public function encoder($donnees, string $checkDigit = ''): string;
 }

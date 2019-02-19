@@ -33,15 +33,21 @@ class Barcode
     private $encodeur;
 
     /**
+     * @var ITransformateur
+     */
+    private $transformateur;
+
+    /**
      * Barcode constructor.
      * @param IValidateur $validateur
      * @param ICalculateur $calculateur
      */
-    public function __construct(IEncodeur $encodeur, IValidateur $validateur = null, ICalculateur $calculateur = null)
+    public function __construct(IEncodeur $encodeur, IValidateur $validateur = null, ICalculateur $calculateur = null, ITransformateur $transformateur = null)
     {
         $this->validateur = $validateur;
         $this->calculateur = $calculateur;
         $this->encodeur = $encodeur;
+        $this->transformateur = $transformateur;
     }
 
     /**
@@ -78,6 +84,9 @@ class Barcode
         if ($this->calculateur === null) {
             return '';
         }
+        if ($this->transformateur instanceof ITransformateur) {
+            $donnees = $this->transformateur->transformer($donnees);
+        }
         return $this->calculateur->getCleControle($donnees);
     }
 
@@ -89,6 +98,10 @@ class Barcode
      */
     public function encoder(string $donnees): string {
         $this->validerDonnees($donnees);
-        return $this->encodeur->encoder($donnees . $this->getChecksum($donnees));
+        $dataTransf = $donnees;
+        if ($this->transformateur instanceof ITransformateur) {
+            $dataTransf = $this->transformateur->transformer($donnees);
+        }
+        return $this->encodeur->encoder($dataTransf, $this->getChecksum($donnees));
     }
 }
