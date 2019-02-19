@@ -53,11 +53,27 @@ echo $code93Bin->valider('/PT/12AZE_RTY34');
 > 0
 
 ## Informations sur les polices de caractères
+Des polices de caractères ont été générées afin de simplifier l'utilisation.  
+Il y a une police générique (GenericBarcode) utilisable lorsque le code à barres à été encodé sous format binaire.  
+Il y a également des polices spécifiques par symbologie (TIW_Code93, TIW_EAN13) utilisables lorsque le code à barres a été encodé sous forme de chaîne.
+
 ### TIW_Code93
-La police encode les 47 caractères valides du Code93 plus un caractère Start/Stop et un caractère de terimaison.  
+La police encode les 47 caractères valides du Code93 plus un caractère Start/Stop et un caractère de terminaison.  
 Le Start/Stop est représenté par le caractère «asterisk» (*).  
 Le caractère de terminaison est représenté par le caractère «pipe» (|).  
 Le présent helper est configuré pour fonctionner avec cette police.
+```php
+echo BarcodeHelper::getBarcode(EnumBarcode::CODE_93_FONT)->encoder("/PT/12AZE_RTY34"); 
+```
+
+### TIW_EAN13
+La police encode les 10 chiffres dans les 3 subsets utilisés par l'EAN13 plus un caractère Start/Stop et un caractère de séparation.  
+Le Start/Stop est représenté par le caractère «asterisk» (*).  
+Le caractère de séparation est représenté par le caractère «moins» (-).  
+Le présent helper est configuré pour fonctionner avec cette police.
+```php
+echo BarcodeHelper::getBarcode(EnumBarcode::EAN_13_FONT)->encoder("123456789012"); 
+```
 
 ### GenericBarcode
 Cette police n'encode que les caractères «0» et «1».  
@@ -65,4 +81,5 @@ Cette police n'encode que les caractères «0» et «1».
 Pour obtenir le résultat sous forme de «0» et de «1», il suffit d'utiliser la classe de cette manière :
 ```php
 echo BarcodeHelper::getBarcode(EnumBarcode::EAN_13_BIN)->encoder("123456789012"); 
+echo BarcodeHelper::getBarcode(EnumBarcode::CODE_93_BIN)->encoder("/PT/12AZE_RTY34");
 ```
