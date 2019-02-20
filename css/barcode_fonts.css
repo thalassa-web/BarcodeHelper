@@ -15,6 +15,12 @@
         url("./fonts/TIW_EAN13.woff") format("woff");
 }
 
+@font-face {
+    font-family: "Code128";
+    src: url("./fonts/TIW_CODE128.ttf") format("truetype"),
+    url("./fonts/TIW_CODE128.woff") format("woff");
+}
+
 .barcode {
     font-family: Barcode;
     font-size: 72pt;
@@ -24,6 +30,11 @@
 .barcode.code93 {
     font-family: Code93;
 }
+
 .barcode.ean13 {
     font-family: Ean13;
+}
+
+.barcode.code128 {
+    font-family: Code128;
 }
