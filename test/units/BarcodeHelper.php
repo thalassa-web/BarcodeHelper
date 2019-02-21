@@ -80,11 +80,10 @@ class BarcodeHelper extends atoum
      * Code 128 Font
      */
     public function testCode128Font() {
-        $chrs = [0 => chr(0), 15 => chr(15), 17 => chr(17), 18 => chr(18), 19 => chr(19), 20 => chr(20)];
         $this
             ->given($barcode = $this->getTestedClassName()::getBarcode(5))
             ->then
             ->string($barcode->encoder('/PT/12AZE RTY34'))
-            ->isEqualTo("h{$chrs[15]}04{$chrs[15]}{$chrs[17]}{$chrs[18]}!:%{$chrs[0]}249{$chrs[19]}{$chrs[20]}-j");
+            ->isEqualTo(chr(170) . "/PT/12AZE RTY34M" . chr(172));
     }
 }
