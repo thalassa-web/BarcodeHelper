@@ -16,6 +16,8 @@ use ThalassaWeb\BarcodeHelper\ancetre\IEncodeur;
  */
 class BinEncodeur implements IEncodeur
 {
+    use CheckDigitConverter;
+
     /**
      * Représentations binaire pour les valeurs de 0 à 105
      */
@@ -66,17 +68,9 @@ class BinEncodeur implements IEncodeur
      */
     public function encoder($donnees, string $checkDigit = ''): string
     {
-        // Récupération de la valeur numérique du check digit
-        $checkDigit = ord($checkDigit);
-        $lastSubset = $donnees->getLastSubset();
-        if ($lastSubset === 'A' && $checkDigit < 64) {
-            $checkDigit += 64;
-        } elseif ($lastSubset === 'B') {
-            $checkDigit -= 32;
-        }
         return static::QUIET .
             implode('', array_map(function (int $valeur) {return static::REPRESENTATION_BINAIRE[$valeur];}, $donnees->getValeurs())) .
-            static::REPRESENTATION_BINAIRE[$checkDigit] .
+            static::REPRESENTATION_BINAIRE[$this->asciiToValue($checkDigit, $donnees->getLastSubset())] .
             static::STOP .
             static::QUIET;
     }

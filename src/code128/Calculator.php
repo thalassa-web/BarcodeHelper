@@ -17,6 +17,8 @@ use ThalassaWeb\BarcodeHelper\ancetre\ICalculateur;
  */
 class Calculator implements ICalculateur
 {
+    use CheckDigitConverter;
+
     /**
      * Obtenir la clé de contrôle
      * @param Enchainement $donnees
@@ -32,12 +34,6 @@ class Calculator implements ICalculateur
             $checkDigit += $index * $arrData[$index];
         }
         // Conversion du Checkdigit numérique en caractère ASCII
-        $checkDigit = $checkDigit % 103;
-        if ($donnees->getLastSubset() === 'B' || ($checkDigit < 64 && $donnees->getLastSubset() !== 'C')) {
-            $checkDigit += 32;
-        } elseif ($donnees->getLastSubset() === 'A') {
-            $checkDigit -= 64;
-        }
-        return chr($checkDigit);
+        return $this->valueToAscii($checkDigit % 103, $donnees->getLastSubset());
     }
 }

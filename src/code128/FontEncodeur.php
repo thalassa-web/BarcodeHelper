@@ -16,6 +16,8 @@ use ThalassaWeb\BarcodeHelper\ancetre\IEncodeur;
  */
 class FontEncodeur implements IEncodeur
 {
+    use CheckDigitConverter;
+
     const PLUS_QUE_95 = ["¡","¢","£","¤","¥","¦","§","¨","©","ª","«","¬"];
 
     /**
@@ -28,13 +30,14 @@ class FontEncodeur implements IEncodeur
      */
     public function encoder($donnees, string $checkDigit = ''): string
     {
+        $valeurs = array_merge($donnees->getValeurs(), [$this->asciiToValue($checkDigit, $donnees->getLastSubset())]);
         // Chaque valeur est transformée en son caractère ASCII associé
+        // On ne retourne que des caractère affichables, on décale donc de 32
+        // Entre 32 et 126 on a 95 caractères affichables
+        // Pour les 12 restants, on utilise le tableau PLUS_QUE_95
         // Caractère STOP = n° 106 = ¬ "ASCII" 172
         return implode('', array_map(function (int $valeur) {
-            // On ne retourne que des caractère affichables, on décale donc de 32
-            // Entre 32 et 126 on a 95 caractères affichables
-            // Pour les 12 restants, on utilise le tableau PLUS_QUE_95
             return $valeur < 95 ? chr($valeur + 32) : self::PLUS_QUE_95[$valeur-95];
-        }, $donnees->getValeurs())) . "{$checkDigit}¬";
+        }, $valeurs)) . "¬";
     }
 }
