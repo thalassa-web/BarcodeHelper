@@ -27,7 +27,7 @@ class FontEncodeur extends atoum
         $this->given($this->newTestedInstance)
             ->then
                 ->string($this->testedInstance->encoder($enchainement, '-'))
-                    ->isIdenticalTo(sprintf("%c/PT/12AZE RTY34M%c", 170, 172))
+                    ->isIdenticalTo("ª/PT/12AZE RTY34M¬")
         ;
     }
 
@@ -42,7 +42,7 @@ class FontEncodeur extends atoum
         $this->given($this->newTestedInstance)
             ->then
                 ->string($this->testedInstance->encoder($enchainement, ']'))
-                    ->isIdenticalTo(sprintf("%c?_ C}%c", 171, 172))
+                    ->isIdenticalTo("«?_ C}¬")
         ;
     }
 }
