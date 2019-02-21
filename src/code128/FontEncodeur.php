@@ -30,21 +30,11 @@ class FontEncodeur implements IEncodeur
     {
         // Chaque valeur est transformée en son caractère ASCII associé
         // Caractère STOP = n° 106 = ¬ "ASCII" 172
-        $valeurs = $donnees->getValeurs();
-        // Récupération de la valeur numérique du check digit
-        $checkDigit = ord($checkDigit);
-        $lastSubset = $donnees->getLastSubset();
-        if ($lastSubset === 'A' && $checkDigit < 64) {
-            $checkDigit += 64;
-        } elseif ($lastSubset === 'B') {
-            $checkDigit -= 32;
-        }
-        $valeurs[] = $checkDigit;
         return implode('', array_map(function (int $valeur) {
             // On ne retourne que des caractère affichables, on décale donc de 32
             // Entre 32 et 126 on a 95 caractères affichables
             // Pour les 12 restants, on utilise le tableau PLUS_QUE_95
             return $valeur < 95 ? chr($valeur + 32) : self::PLUS_QUE_95[$valeur-95];
-        }, $valeurs)) . '¬';
+        }, $donnees->getValeurs())) . "{$checkDigit}¬";
     }
 }

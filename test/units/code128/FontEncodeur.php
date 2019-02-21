@@ -42,7 +42,7 @@ class FontEncodeur extends atoum
         $this->given($this->newTestedInstance)
             ->then
                 ->string($this->testedInstance->encoder($enchainement, ']'))
-                    ->isIdenticalTo("«?_ C}¬")
+                    ->isIdenticalTo("«?_ C]¬")
         ;
     }
 }
