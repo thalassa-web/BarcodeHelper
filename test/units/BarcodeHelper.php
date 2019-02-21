@@ -86,4 +86,15 @@ class BarcodeHelper extends atoum
             ->string($barcode->encoder('/PT/12AZE RTY34'))
             ->isEqualTo("ª/PT/12AZE RTY34-¬");
     }
+
+    /**
+     * Code 128 Font
+     */
+    public function testCode128FontSubsetC() {
+        $this
+            ->given($barcode = $this->getTestedClassName()::getBarcode(5))
+            ->then
+                ->string($barcode->encoder('012846018491'))
+                    ->isEqualTo(    "«!<N!t{B¬");
+    }
 }
