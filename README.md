@@ -76,10 +76,26 @@ echo BarcodeHelper::getBarcode(EnumBarcode::EAN_13_FONT)->encoder("123456789012"
 ```
 
 ### TIW_CODE128
-La police encode les 102 valeurs utilisées par le code 128 plus trois caractères Start (1 par subset) et un caractère Stop.  
+La police encode les 103 valeurs utilisées par le code 128 plus trois caractères Start (1 par subset) et un caractère Stop.  
 Les caractères Start contiennent une zone de silence en début équivalent à un espace vide de 10 barres.   
 Le caractère Stop contient une zone de silence à la fin équivalent à un espace vide de 10 barres.  
 La table de composition suivante a été utilisée : http://www.gomaro.ch/Specifications/code128.htm.  
+Pour ne pas avoir de problèmes d'affichage, seuls des caractères affichables ont été encodés.  
+Les valeurs (de la table de composition) allant de 0 à 94 (inclus) ont été augmentée de 32 afin d'utiliser les codes ASCII de 32 à 126.  
+À partir de 95, les caractères utilisés sont les suivants :
+* ¡ (95)
+* ¢ (96)
+* £ (97)
+* ¤ (98)
+* ¥ (99)
+* ¦ (100)
+* § (101)
+* ¨ (102)
+* © (103 - Début A)
+* ª (104 - Début B)
+* « (105 - Début C)
+* ¬ (106 - Fin)
+
 Le présent helper est configuré pour fonctionner avec cette police.
 ```php
 echo BarcodeHelper::getBarcode(EnumBarcode::CODE_128_FONT)->encoder("/PT/12AZE_RTY34"); 
