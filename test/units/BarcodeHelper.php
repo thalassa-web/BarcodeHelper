@@ -84,6 +84,6 @@ class BarcodeHelper extends atoum
             ->given($barcode = $this->getTestedClassName()::getBarcode(5))
             ->then
             ->string($barcode->encoder('/PT/12AZE RTY34'))
-            ->isEqualTo("ª/PT/12AZE RTY34M¬");
+            ->isEqualTo("ª/PT/12AZE RTY34-¬");
     }
 }
