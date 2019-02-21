@@ -26,10 +26,10 @@ trait CheckDigitConverter
         return chr($value);
     }
     /**
-     * Conversion valeur check digit en caractère ASCII
-     * @param int $value
+     * Conversion de la valeur ASCII du check digit en sa valeur numérique
+     * @param string $ascii
      * @param string $subset
-     * @return string
+     * @return int
      */
     protected function asciiToValue(string $ascii, string $subset): int {
         $checkDigit = ord($ascii);
